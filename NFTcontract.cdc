@@ -1,4 +1,4 @@
-import NonFungibleToken from 0x02
+import NonFungibleToken from 0x06
 pub contract CryptoPoops: NonFungibleToken {
   pub var totalSupply: UInt64
 
@@ -15,14 +15,24 @@ pub contract CryptoPoops: NonFungibleToken {
 
     init(_name: String, _favouriteFood: String, _luckyNumber: Int) {
       self.id = self.uuid
-
       self.name = _name
       self.favouriteFood = _favouriteFood
       self.luckyNumber = _luckyNumber
     }
   }
 
-  pub resource Collection: NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic {
+    pub resource interface MyCollectionPublic {
+
+      pub fun deposit(token: @NonFungibleToken.NFT)
+      pub fun getIDs(): [UInt64]
+      pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT
+      pub fun borrowAuthNFT(id: UInt64): &NFT
+      pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT
+    
+  }
+  
+
+  pub resource Collection: NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic,  MyCollectionPublic {
     pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
 
     pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
@@ -44,6 +54,11 @@ pub contract CryptoPoops: NonFungibleToken {
 
     pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
       return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
+    }
+
+    pub fun borrowAuthNFT(id: UInt64): &NFT {
+    let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
+    return ref as! &NFT
     }
 
     init() {
@@ -77,3 +92,4 @@ pub contract CryptoPoops: NonFungibleToken {
     self.account.save(<- create Minter(), to: /storage/Minter)
   }
 }
+ 
