@@ -55,7 +55,7 @@ The NFT resource defines the following fields:
 # Authors
 * Metacrafter Jacob Tucker @metacraftersio
 
-* Anstin Baby [Blockchain developer]
+* Arun James [Blockchain developer]
 
 # License
 This NFT program is not licensed.
